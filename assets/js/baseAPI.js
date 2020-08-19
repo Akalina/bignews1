@@ -1,5 +1,19 @@
 var baseURL = 'http://ajax.frontend.itheima.net';
 $.ajaxPrefilter(function (params) {
-    // console.log(params.url);
     params.url = baseURL + params.url
+    if (params.url.indexOf("/my/") !== -1) {
+        params.headers = {
+            Authorization: localStorage.getItem("token") || ""
+        }
+    }
+    // console.log(params.url);
+    params.complete = function (res) {
+        console.log(res.responseJSON);
+        var obj = res.responseJSON;
+        if (obj.status == 1 && obj.message == "身份认证失败！") {
+            console.log(1);
+            localStorage.removeItem("token")
+            location.href = '/login.html'
+        }
+    }
 })
